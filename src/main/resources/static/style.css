@@ -1,0 +1,315 @@
+:root {
+    --primary-color: #2c3e50;    /* Azul escuro institucional */
+    --secondary-color: #3498db;  /* Azul destaque */
+    --accent-color: #e74c3c;     /* Vermelho para ações/alertas */
+    --light-bg: #f4f7f6;
+    --white: #ffffff;
+    --text-color: #333;
+    --sidebar-width: 260px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light-bg);
+    color: var(--text-color);
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    transition: all 0.3s;
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar nav ul {
+    list-style: none;
+}
+
+.sidebar nav ul li {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    transition: background 0.2s;
+}
+
+.sidebar nav ul li:hover, .sidebar nav ul li.active {
+    background-color: rgba(255,255,255,0.1);
+    border-left: 4px solid var(--secondary-color);
+}
+
+.user-info {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.logout-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+/* Main Content Styles */
+.content {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    padding: 30px;
+    width: calc(100% - var(--sidebar-width));
+}
+
+header {
+    margin-bottom: 30px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+/* Views Management */
+.view {
+    display: none;
+    animation: fadeIn 0.4s;
+}
+
+.view.active-view {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dashboard Cards */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-left: 5px solid var(--secondary-color);
+}
+
+.card .number {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-top: 10px;
+}
+
+/* Forms */
+.form-container {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    max-width: 800px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+/* Tables */
+.table-container {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 15px 10px;
+    }
+    .sidebar h2, .sidebar .user-info p, .sidebar nav ul li span:nth-child(2), .logout-btn {
+        display: none; /* Esconde textos, mantém ícones */
+    }
+    .logout-btn {
+        display: flex; /* Mantém o botão visível mas pequeno */
+    }
+    .content {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+        padding: 15px;
+    }
+    .form-row {
+        grid-template-columns: 1fr; /* Stack inputs on mobile */
+    }
+}
+/* --- ESTILOS DA TELA DE LOGIN --- */
+
+/* Fundo escuro que cobre a tela toda */
+#login-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1a252f 100%);
+    display: flex;          /* Isso é essencial para centralizar */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
+    z-index: 1000;          /* Garante que fique na frente de tudo */
+}
+
+/* O cartão branco onde ficam os inputs */
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Estilização do cabeçalho do login */
+.login-header h2 {
+    color: var(--primary-color);
+    margin: 10px 0 5px 0;
+}
+
+.login-header p {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-bottom: 30px;
+}
+
+/* Rodapé do login (links) */
+.login-footer {
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.login-footer a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    line-height: 1.6;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Ajuste para o campo de seleção ficar branco */
+#tipo-usuario {
+    background-color: white;
+}
+
+/* Reutiliza o estilo do fundo de login para o cadastro */
+#register-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1a252f 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Garante que os campos específicos ocultos não ocupem espaço */
+.specific-fields {
+    animation: fadeIn 0.3s;
+}
