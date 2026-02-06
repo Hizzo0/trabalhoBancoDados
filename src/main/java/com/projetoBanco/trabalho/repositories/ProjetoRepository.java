@@ -22,4 +22,6 @@ public interface ProjetoRepository extends JpaRepository<Projeto, Long> {
 
     //buscar por titulo
     Optional<Projeto> findByTitulo(String titulo);
+
+
 }

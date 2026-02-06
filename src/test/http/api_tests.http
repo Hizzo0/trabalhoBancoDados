@@ -6,7 +6,8 @@ Content-Type: application/json
     "nome": "Dr. Alan Turing",
     "email": "turing@universidade.com",
     "cpf": "11122255555",
-    "departamento": "Ciência da Computação"
+    "departamento": "Ciência da Computação",
+    "senha": "senha222"
 }
 
 ### 2. Atualizar Docente por CPF (PUT)
@@ -25,31 +26,48 @@ GET http://localhost:8080/api/participantes/cpf/11122255555
 ### 4. Deletar Docente por CPF (DELETE)
 DELETE http://localhost:8080/api/participantes/docentes/cpf/11122255555
 
+
 ### 5. Cadastrar um Projeto (Usando o Docente acima)
-# ATENÇÃO: ajuste o campo coordenador.id para o ID correto do docente no seu banco
+### Criar Projeto Sem Financiamento
 POST http://localhost:8080/api/projetos
 Content-Type: application/json
 
 {
-    "codigoUnico": "PROJ-IA-2026",
-    "titulo": "Pesquisa em Redes Neurais",
-    "descricao": "Estudo avançado de modelos generativos",
-    "dataInicio": "2026-02-01",
-    "situacao": "ATIVO",
-    "coordenador": { "id":  }
+  "codigoUnico": "PROJ-2026-SEM-VERBA",
+  "titulo": "Pesquisa Teórica Exploratória",
+  "descricao": "Projeto de pesquisa sem fomento externo inicial.",
+  "situacao": "PLANEJAMENTO",
+  "dataInicio": "2026-03-01",
+  "cpfCoordenador": "11122255555"
 }
-
 ### 6. Atualizar Projeto por Código (PUT)
 PUT http://localhost:8080/api/projetos/codigo/PROJ-IA-2026
 Content-Type: application/json
 
 {
-    "titulo": "Pesquisa em Redes Neurais - Atualizado",
-    "descricao": "Descrição atualizada",
+    "codigoUnico": "PIBIC-2026",
+    "titulo": "Estudo de Algoritmos Atualizado",
+    "descricao": "Pesquisa sobre eficiência em Java - Versão 2",
     "dataInicio": "2026-02-01",
     "dataFim": "2026-12-31",
-    "situacao": "CONCLUIDO"
+    "situacao": "CONCLUIDO",
+    "cpfCoordenador": "12345678900",
+    "agenciaFinanciador": "CNPq"
 }
+
+
+### Criar Financiamento (Agência)
+POST http://localhost:8080/api/financiamentos
+Content-Type: application/json
+
+{
+  "agenciaFinanciador": "CNPq",
+  "tipoFomento": "Bolsa de Pesquisa",
+  "valorTotal": 50000.0
+}
+
+### Listar Financiamentos
+GET http://localhost:8080/api/financiamentos
 
 ### 7. Deletar Projeto por Código (DELETE)
 DELETE http://localhost:8080/api/projetos/codigo/PROJ-IA-2026
@@ -73,8 +91,9 @@ Content-Type: application/json
 {
     "nome": "Maria Estudante",
     "email": "maria@universidade.com",
-    "cpf": "22233344455",
-    "curso": "Engenharia"
+    "cpf": "22233344459",
+    "matricula": "Engenharia",
+    "senha": "senha123"
 }
 
 ### 13. Criar Técnico (POST)
@@ -88,7 +107,3 @@ Content-Type: application/json
     "setor": "Laboratório"
 }
 
-# Dicas:
-# - Ajuste os CPFs e IDs conforme seu banco.
-# - Use o plugin REST Client do VS Code para executar este arquivo (.http).
-# - Se um endpoint retornar 404, verifique se o recurso existe e se o valor (CPF / código) está correto.

@@ -10,4 +10,7 @@ public interface FinanciamentoRepository extends JpaRepository<Financiamento, Lo
 
     // Buscar Financiamentos por projeto apoiado codigo unico
     List<Financiamento> findByProjeto_CodigoUnico(String codigoUnico);
+
+    // Buscar Financiamento por Agência Exata
+    java.util.Optional<Financiamento> findByAgenciaFinanciador(String agencia);
 }
