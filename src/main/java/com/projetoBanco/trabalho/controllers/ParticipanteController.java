@@ -3,11 +3,14 @@ package com.projetoBanco.trabalho.controllers;
 import com.projetoBanco.trabalho.models.*;
 import com.projetoBanco.trabalho.repositories.ParticipanteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.projetoBanco.trabalho.dto.LoginDTO;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @CrossOrigin(origins = "*")
@@ -20,19 +23,32 @@ public class ParticipanteController {
 
 
     // Login (autenticação básica) com cpf e senha, utilizando dto
-   @PostMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         return participanteRepository.findByCpf(loginDTO.getCpf())
-                .map(participante -> {
-                    if (participante.getSenha().equals(loginDTO.getSenha())) {
-                        return ResponseEntity.ok(participante);
-                    } else {
-                        // Senha não bate
-                        return ResponseEntity.status(401).body("Senha incorreta.");
-                    }
-                })
-                // CPF não encontrado
-                .orElse(ResponseEntity.status(401).body("Usuário não encontrado."));
+            .map(participante -> {
+
+                if (!participante.getSenha().equals(loginDTO.getSenha())) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Senha incorreta.");
+                }
+
+                String tipo = "PARTICIPANTE";
+                if (participante instanceof Docente) {
+                    tipo = "DOCENTE";
+                } else if (participante instanceof Discente) {
+                    tipo = "DISCENTE";
+                } else if (participante instanceof Tecnico) {
+                    tipo = "TECNICO";
+                }
+
+            
+                Map<String, Object> resposta = new HashMap<>();
+                resposta.put("usuario", participante);
+                resposta.put("autoridade", tipo);
+
+                return ResponseEntity.ok(resposta);
+            })
+            .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não encontrado com o CPF informado."));
     }
 
     // Logout
