@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Getter
 @Setter
@@ -18,12 +20,12 @@ public class Projeto {
 
     @Column(unique = true)
     private String codigoUnico;
-    
+
     private String titulo;
-    
+
     @Column(length = 1000) // Descrições costumam ser longas
     private String descricao;
-    
+
     private LocalDate dataInicio;
     private LocalDate dataFim;
     private String situacao;
@@ -40,6 +42,7 @@ public class Projeto {
 
     // Relacionamento com a classe associativa
     @OneToMany(mappedBy = "projeto")
+    @JsonManagedReference
     private List<VinculoParticipacao> vinculos;
 
     // Relacionamento com Produção Científica
