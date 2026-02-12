@@ -10,10 +10,11 @@ export interface ProjetoDTO {
   titulo: string;
   descricao: string;
   situacao: string;
-  dataInicio: string; // ISO string para LocalDate
-  dataFim?: string;
-  cpfCoordenador: string;
-  agenciaFinanciador?: string;
+  dataInicio: string;
+  coordenador: { // Mudança aqui
+    cpf: string;
+    nome: string;
+  };
 }
 
 // Interface para exibição (Baseado em Projeto.java)
@@ -32,6 +33,7 @@ export interface FinanciamentoDTO {
   valorTotal: number;
   periodoVigenciaInicio: string; 
   periodoVigenciaFim: string;
+  codigoProjeto?: string;
 }
 
 export interface ProducaoDTO {

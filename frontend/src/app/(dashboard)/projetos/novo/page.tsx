@@ -18,46 +18,58 @@ export default function NovoProjetoPage() {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  // 1. Recupera a string do storage
-  const usuarioSalvo = sessionStorage.getItem('usuarioLogado');
-  
-  // 2. Converte para objeto
-  const dadosSessao = usuarioSalvo ? JSON.parse(usuarioSalvo) : null;
+    const usuarioSalvo = sessionStorage.getItem('usuarioLogado');
+    const dadosSessao = usuarioSalvo ? JSON.parse(usuarioSalvo) : null;
+    const usuarioInterno = dadosSessao?.usuario;
 
-  // 3. CORREÇÃO: O CPF está dentro de dadosSessao.usuario
-  const usuarioInterno = dadosSessao?.usuario;
-
-  if (!usuarioInterno?.cpf) {
-    alert("Erro: Usuário não identificado. Faça login novamente.");
-    setLoading(false);
-    return;
-  }
-
-  // 4. Monta o objeto para o backend
-  const projetoParaEnviar: ProjetoDTO = {
-    ...formData,
-    cpfCoordenador: usuarioInterno.cpf 
-  };
-
-  try {
-    const res = await api.cadastrarProjeto(projetoParaEnviar);
-    if (res.ok) {
-      alert("Projeto cadastrado com sucesso!");
-      router.push('/projetos');
-    } else {
-      const msg = await res.text();
-      alert(`Erro: ${msg}`);
+    if (!usuarioInterno?.cpf) {
+      alert("Erro: Usuário não identificado.");
+      setLoading(false);
+      return;
     }
-  } catch {
-    alert("Erro de conexão com o servidor.");
-  } finally {
-    setLoading(false);
-  }
-};
 
+    const projetoParaEnviar: ProjetoDTO = {
+      ...formData,
+      cpfCoordenador: usuarioInterno.cpf 
+    };
+
+    try {
+      // ETAPA 1: Cadastrar o Projeto
+      const resProjeto = await api.cadastrarProjeto(projetoParaEnviar);
+      
+      if (resProjeto.ok) {
+        // ETAPA 2: Criar o Vínculo Manualmente via Frontend
+        // Usamos o código do projeto e o CPF do coordenador
+        const resVinculo = await api.vincularParticipante(
+          formData.codigoUnico, 
+          usuarioInterno.cpf, 
+          "Coordenador" // Certifique-se que o Java aceita esta string ou ENUM
+        );
+
+        if (resVinculo.ok) {
+          alert("Projeto cadastrado e vinculado com sucesso!");
+          router.push('/projetos');
+        } else {
+          const msgErro = await resVinculo.text();
+          alert(`Projeto criado, mas erro ao vincular: ${msgErro}`);
+          // Mesmo com erro no vínculo, redirecionamos pois o projeto já existe
+          router.push('/projetos');
+        }
+      } else {
+        const msg = await resProjeto.text();
+        alert(`Erro ao cadastrar projeto: ${msg}`);
+      }
+    } catch (error) {
+      alert("Erro de conexão com o servidor.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));

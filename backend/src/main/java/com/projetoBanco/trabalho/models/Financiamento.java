@@ -5,6 +5,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Getter
@@ -27,4 +28,9 @@ public class Financiamento {
     @JsonIgnore
     @OneToOne(mappedBy = "financiamento")
     private Projeto projeto;
+
+    @JsonProperty("codigoProjeto")
+    public String getCodigoProjeto() {
+        return projeto != null ? projeto.getCodigoUnico() : null;
+    }
 }

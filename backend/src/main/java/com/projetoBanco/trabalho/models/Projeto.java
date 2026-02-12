@@ -47,5 +47,6 @@ public class Projeto {
 
     // Relacionamento com Produção Científica
     @OneToMany(mappedBy = "projeto")
+    @JsonManagedReference
     private List<ProducaoCientifica> producoes;
 }

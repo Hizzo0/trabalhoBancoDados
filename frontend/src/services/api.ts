@@ -33,7 +33,20 @@ export interface ProjetoDTO {
   cpfCoordenador: string;
   agenciaFinanciador?: string;
 }
-
+interface ProjetoBackend {
+  codigoUnico: string;
+  titulo: string;
+  descricao?: string;
+  dataInicio: string;
+  situacao: string;
+  coordenador: {
+    cpf: string;
+    nome?: string;
+  };
+  financiamento?: {
+    agenciaFinanciador: string;
+  };
+}
 const API_BASE = "http://localhost:8080/api";
 
 export const api = {
@@ -52,8 +65,6 @@ export const api = {
   listarProjetos: (): Promise<Projeto[]> => 
     fetch(`${API_BASE}/projetos`).then(res => res.json()),
 
-  obterProjeto: (codigo: string): Promise<ProjetoDTO> =>
-  fetch(`${API_BASE}/projetos/codigo/${codigo}`).then(res => res.json()),
 
   cadastrarProjeto: (projeto: ProjetoDTO) => 
     fetch(`${API_BASE}/projetos`, {
@@ -62,6 +73,12 @@ export const api = {
       body: JSON.stringify(projeto)
     }),
 
+  obterProjeto: (codigo: string): Promise<ProjetoBackend> => 
+    fetch(`${API_BASE}/projetos/codigo/${codigo}`).then(res => {
+      if (!res.ok) throw new Error("Projeto não encontrado");
+      return res.json();
+    }),
+    
   atualizarProjeto: (codigo: string, projeto: ProjetoDTO) =>
     fetch(`${API_BASE}/projetos/codigo/${codigo}`, {
       method: 'PUT',
@@ -182,6 +199,17 @@ export const api = {
       method: 'POST'
     }),
 
-    listarMeusProjetos: (cpf: string): Promise<Projeto[]> => 
-    fetch(`${API_BASE}/projetos/meus/${cpf}`).then(res => res.json()),
+  listarProjetosPorParticipante: (cpf: string): Promise<Projeto[]> => 
+    fetch(`${API_BASE}/vinculos/participante/${cpf}/projetos`).then(res => res.json()),
+
+  atualizarFinanciamentoPorProjeto: (codigoProjeto: string, dados: FinanciamentoDTO) => {
+    if (!codigoProjeto) {
+      console.error("Erro: codigoProjeto não fornecido para a API");
+    }
+    return fetch(`${API_BASE}/financiamentos/projeto/codigo/${codigoProjeto}`, {
+      method: 'PUT', 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados)
+    });
+  },
 };
