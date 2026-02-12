@@ -100,7 +100,6 @@ O sistema foi construído com base nos seguintes requisitos:
 
 - Caio Santana
 - Danyllo Rangel
-- Italo
-- Henzo Ferreira
+- Italo Henzo Gomes Ferreira
 - Lucas de Souza Gratky
 - Luiza Pauli
