@@ -2,7 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { api, ProjetoDTO } from '@/services/api'; // Use as interfaces do seu serviço
+import { api, ProjetoDTO } from '@/services/api';
+
+interface ProjetoBackend {
+  codigoUnico: string;
+  titulo: string;
+  descricao?: string;
+  dataInicio: string;
+  situacao: string;
+  coordenador: {
+    cpf: string;
+    nome?: string;
+  };
+  financiamento?: {
+    agenciaFinanciador: string;
+  };
+}
 
 export default function EditarProjetoPage() {
   const { codigo } = useParams();
@@ -16,24 +31,29 @@ export default function EditarProjetoPage() {
     descricao: '',
     dataInicio: '',
     situacao: 'ANDAMENTO',
-    cpfCoordenador: ''
+    cpfCoordenador: '',
+    agenciaFinanciador: '' 
   });
 
   useEffect(() => {
-    // UC03 - Carrega os dados detalhados para edição [cite: 158]
     api.obterProjeto(codigo as string)
-      .then((dados: ProjetoDTO) => {
-        setFormData({
-          codigoUnico: dados.codigoUnico,
-          titulo: dados.titulo,
-          descricao: dados.descricao || '',
-          dataInicio: dados.dataInicio,
-          situacao: dados.situacao,
-          cpfCoordenador: dados.cpfCoordenador
-        });
-        setLoading(false);
-      })
-      .catch(() => {
+  .then((dados: ProjetoBackend) => {
+    const dataLimpa = dados.dataInicio ? dados.dataInicio.split('T')[0] : '';
+
+    setFormData({
+      ...formData,
+      codigoUnico: dados.codigoUnico,
+      titulo: dados.titulo,
+      descricao: dados.descricao || '',
+      dataInicio: dataLimpa, 
+      situacao: dados.situacao,
+      cpfCoordenador: dados.coordenador.cpf,
+      agenciaFinanciador: dados.financiamento?.agenciaFinanciador || ''
+    });
+    setLoading(false);
+  })
+      .catch((err) => {
+        console.error("Erro ao carregar projeto:", err);
         alert("Erro ao carregar dados do projeto.");
         router.push('/projetos');
       });
@@ -44,22 +64,23 @@ export default function EditarProjetoPage() {
     setSaving(true);
 
     try {
-      // COLOCAR /api/projetos/codigo/{codigo}
       const res = await api.atualizarProjeto(codigo as string, formData);
+      
       if (res.ok) {
         alert("Projeto atualizado com sucesso!");
         router.push('/projetos');
       } else {
-        alert("Erro ao salvar alterações.");
+        const erroMsg = await res.text();
+        alert(`Erro ao salvar: ${erroMsg}`);
       }
     } catch {
-      alert("Erro de conexão.");
+      alert("Erro de conexão com o servidor.");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div className="p-10 text-center text-gray-400">Carregando dados...</div>;
+  if (loading) return <div className="p-10 text-center text-gray-400">Carregando dados da pesquisa...</div>;
 
   return (
     <div className="max-w-4xl mx-auto p-4 animate-fadeIn">
@@ -68,8 +89,8 @@ export default function EditarProjetoPage() {
           <span className="material-icons">arrow_back</span>
         </button>
         <div>
-          <h2 className="text-2xl font-bold text-[#2c3e50]">Editar Projeto</h2>
-          <p className="text-sm text-gray-500">Atualize as informações da pesquisa</p>
+          <h2 className="text-2xl font-bold text-[#2c3e50]">Editar Projeto: {codigo}</h2>
+          <p className="text-sm text-gray-500">Atualize as informações da pesquisa acadêmica [UC03]</p>
         </div>
       </header>
 
@@ -85,7 +106,7 @@ export default function EditarProjetoPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-black text-gray-400 uppercase mb-2">Situação</label>
+            <label className="block text-xs font-black text-gray-400 uppercase mb-2">Situação Atual</label>
             <select
               value={formData.situacao}
               onChange={(e) => setFormData({...formData, situacao: e.target.value})}
@@ -99,7 +120,7 @@ export default function EditarProjetoPage() {
         </div>
 
         <div>
-          <label className="block text-xs font-black text-gray-400 uppercase mb-2">Título do Projeto *</label>
+          <label className="block text-xs font-black text-gray-400 uppercase mb-2">Título da Pesquisa *</label>
           <input
             required
             value={formData.titulo}
@@ -108,9 +129,8 @@ export default function EditarProjetoPage() {
           />
         </div>
 
-        {/* Adicionado Campo de Descrição para satisfazer a ProjetoDTO e Requisitos */}
         <div>
-          <label className="block text-xs font-black text-gray-400 uppercase mb-2">Descrição da Pesquisa *</label>
+          <label className="block text-xs font-black text-gray-400 uppercase mb-2">Resumo/Descrição *</label>
           <textarea
             required
             rows={4}
@@ -120,14 +140,38 @@ export default function EditarProjetoPage() {
           />
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-xs font-black text-gray-400 uppercase mb-2">Data de Início *</label>
+            <input
+              required
+              type="date"
+              value={formData.dataInicio}
+              onChange={(e) => setFormData({...formData, dataInicio: e.target.value})}
+              className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-[#3498db]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-black text-gray-400 uppercase mb-2">CPF do Coordenador</label>
+            <input
+              name="cpfCoordenador"
+              value={formData.cpfCoordenador}
+              onChange={(e) => setFormData({...formData, cpfCoordenador: e.target.value})}
+              placeholder="Digite o CPF do Docente"
+              className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:border-[#3498db] bg-gray-50/50"
+            />
+          </div>
+        </div>
+
         <div className="pt-6 border-t border-gray-100 flex justify-end gap-3">
-          <button type="button" onClick={() => router.back()} className="px-6 py-3 text-sm font-bold text-gray-400">
+          <button type="button" onClick={() => router.back()} className="px-6 py-3 text-sm font-bold text-gray-400 hover:text-gray-600">
             Cancelar
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="px-8 py-3 bg-[#3498db] text-white text-sm font-bold rounded-xl shadow-lg hover:bg-[#2980b9] disabled:opacity-50 flex items-center gap-2"
+            className="px-8 py-3 bg-[#3498db] text-white text-sm font-bold rounded-xl shadow-lg hover:bg-[#2980b9] disabled:opacity-50 transition-all flex items-center gap-2"
           >
             {saving ? <span className="material-icons animate-spin text-sm">sync</span> : <span className="material-icons text-sm">save</span>}
             Salvar Alterações
