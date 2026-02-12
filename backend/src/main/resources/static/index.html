@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGPesq - Sistema de Gestão de Pesquisa</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-header">
+                <span class="material-icons" style="font-size: 48px; color: var(--secondary-color);">science</span>
+                <h2>Acesso SIGPesq</h2>
+                <p>Universidade Federal do Espírito Santo</p>
+            </div>
+            
+            <form id="formLogin">
+                <div class="form-group">
+                    <label for="login-email">E-mail Institucional ou CPF</label>
+                    <input type="text" id="login-email" placeholder="usuario@ufes.br" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-senha">Senha</label>
+                    <input type="password" id="login-senha" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo-usuario">Tipo de Usuário</label>
+                    <select id="tipo-usuario">
+                        <option value="docente">Docente / Coordenador</option>
+                        <option value="discente">Discente (Aluno)</option>
+                        <option value="tecnico">Técnico-Administrativo</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">Entrar</button>
+                
+                <div class="login-footer">
+                    <a href="#">Esqueci minha senha</a>
+                    <br>
+                    <a href="#" onclick="showRegister()">Primeiro acesso? Cadastre-se</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="register-screen" style="display: none;">
+        <div class="login-card" style="max-width: 500px;"> <div class="login-header">
+                <span class="material-icons" style="font-size: 48px; color: var(--secondary-color);">person_add</span>
+                <h2>Novo Cadastro</h2>
+                <p>Preencha os dados para solicitar acesso</p>
+            </div>
+
+            <form id="formRegister">
+                <div class="form-group">
+                    <label for="reg-tipo">Sou:</label>
+                    <select id="reg-tipo" onchange="toggleFields()" required>
+                        <option value="discente">Discente (Aluno)</option>
+                        <option value="docente">Docente (Professor)</option>
+                        <option value="tecnico">Técnico-Administrativo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-nome">Nome Completo</label>
+                    <input type="text" id="reg-nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email">E-mail Institucional</label>
+                    <input type="email" id="reg-email" placeholder="nome@ufes.br" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reg-senha">Senha</label>
+                        <input type="password" id="reg-senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-lattes">Link Lattes</label>
+                        <input type="url" id="reg-lattes" placeholder="http://lattes.cnpq.br/...">
+                    </div>
+                </div>
+
+                <div id="fields-discente" class="specific-fields">
+                    <div class="form-group">
+                        <label for="reg-matricula">Matrícula</label>
+                        <input type="text" id="reg-matricula" placeholder="2023..." >
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-curso">Curso</label>
+                        <input type="text" id="reg-curso" placeholder="Ex: Engenharia de Computação">
+                    </div>
+                        <div class="form-group">
+                            <label for="reg-cpf-dic">CPF</label>
+                            <input type="text" id="reg-cpf-dic" placeholder="000.000.000-00">
+                        </div>
+                </div>
+
+                <div id="fields-docente" class="specific-fields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-cpf-doc">CPF</label>
+                            <input type="text" id="reg-cpf-doc" placeholder="000.000.000-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-dept">Departamento</label>
+                            <select id="reg-dept">
+                                <option value="">Selecione...</option>
+                                <option value="D001">Engenharias e Tecnologia (DETEC)</option>
+                                <option value="D002">Computação e Eletrônica (DCE)</option>
+                                <option value="D003">Ciências da Saúde (DCS)</option>
+                                <option value="D004">Ciências Naturais (DCN)</option>
+                                <option value="D005">Educação e Ciências Humanas</option>
+                                <option value="D006">Ciências Agrárias e Biológicas</option>
+                                <option value="D007">Matemática Aplicada</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fields-tecnico" class="specific-fields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-cpf-tec">CPF</label>
+                            <input type="text" id="reg-cpf-tec" placeholder="000.000.000-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-cargo">Cargo</label>
+                            <select id="reg-cargo">
+                                <option value="">Selecione...</option>
+                                <option value="CA0001">Assistente em Administração</option>
+                                <option value="CA0002">Técnico de TI</option>
+                                <option value="CA0003">Técnico de Laboratório</option>
+                                <option value="CA0004">Administrador</option>
+                                <option value="CA0005">Bibliotecário</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Cadastrar</button>
+
+                <div class="login-footer">
+                    <a href="#" onclick="showLogin()">Já tenho conta? Fazer Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container" id="app-sistema" style="display: none;">
+        
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="material-icons">science</span>
+                <h2>SIGPesq</h2>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li class="active" onclick="navigateTo('dashboard')">
+                        <span class="material-icons">dashboard</span> Dashboard
+                    </li>
+                    <li onclick="navigateTo('projects-list')">
+                        <span class="material-icons">list</span> Meus Projetos
+                    </li>
+                    <li onclick="navigateTo('new-project')">
+                        <span class="material-icons">add_circle</span> Cadastrar Projeto
+                    </li>
+                    <li onclick="navigateTo('finances')">
+                        <span class="material-icons">attach_money</span> Financiamentos
+                    </li>
+                    <li onclick="navigateTo('productions')">
+                        <span class="material-icons">description</span> Produções
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="user-info">
+                <p>Bem-vindo, <strong>Prof. Silvia</strong></p>
+                <button class="logout-btn" onclick="realizarLogout()">
+                    <span class="material-icons">logout</span> Sair
+                </button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header>
+                <h1 id="page-title">Dashboard</h1>
+            </header>
+
+            <section id="dashboard" class="view active-view">
+                <div class="cards-container">
+                    <div class="card">
+                        <h3>Projetos Ativos</h3>
+                        <p class="number">12</p>
+                    </div>
+                    <div class="card">
+                        <h3>Financiamentos</h3>
+                        <p class="number">R$ 450k</p>
+                    </div>
+                    <div class="card">
+                        <h3>Produções (2025)</h3>
+                        <p class="number">34</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects-list" class="view">
+                <div class="table-container">
+                    <table id="tabela-projetos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Início</th>
+                                <th>Situação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="new-project" class="view">
+                <div class="form-container">
+                    <form id="formProjeto">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="idProjeto">Código (ID)</label>
+                                <input type="text" id="idProjeto" required placeholder="Ex: PRJ001">
+                            </div>
+                            <div class="form-group">
+                                <label for="cpfCoordenador">CPF Coordenador</label>
+                                <input type="text" id="cpfCoordenador" required placeholder="000.000.000-00">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="titulo">Título do Projeto</label>
+                            <input type="text" id="titulo" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descricao">Descrição</label>
+                            <textarea id="descricao" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dataInicio">Data Início</label>
+                                <input type="date" id="dataInicio" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dataFim">Data Fim</label>
+                                <input type="date" id="dataFim">
+                            </div>
+                            <div class="form-group">
+                                <label for="situacao">Situação</label>
+                                <select id="situacao">
+                                    <option value="1">Em Andamento</option>
+                                    <option value="2">Concluído</option>
+                                    <option value="0">Suspenso</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Salvar Projeto</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="finances" class="view"><h2>Gestão de Financiamentos (Em Breve)</h2></section>
+            <section id="productions" class="view"><h2>Gestão de Produções (Em Breve)</h2></section>
+
+        </main>
+    </div> <script src="script.js"></script>
+</body>
+</html>
